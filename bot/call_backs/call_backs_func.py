@@ -115,7 +115,6 @@ async def process_movie_callback(callback_query: types.CallbackQuery):
                 print("Егор")
 
         short_description = short_description + "..."
-        print(short_description)
         movie_message = movie_message + f"📝 Описание: {short_description}\n"
     slogan = movie_info.get('slogan')
     if slogan:
@@ -138,9 +137,12 @@ async def process_movie_callback(callback_query: types.CallbackQuery):
     poster_url = movie_info.get('poster', {}).get('url')
 
     if poster_url:
-        media_group = MediaGroupBuilder(caption=movie_message)
-        media_group.add(type="photo", media=poster_url)
-        await callback_query.message.answer_media_group(media=media_group.build())
+        try:
+            media_group = MediaGroupBuilder(caption=movie_message)
+            media_group.add(type="photo", media=poster_url)
+            await callback_query.message.answer_media_group(media=media_group.build())
+        except:
+            await image_bot.send_message(callback_query.from_user.id, movie_message)
     else:
         await image_bot.send_message(callback_query.from_user.id, movie_message)
 
